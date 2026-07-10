@@ -119,7 +119,8 @@
 
   .founder .wrap{display:grid;grid-template-columns:.85fr 1.15fr;gap:56px;align-items:start}
   .portrait{border:1px solid var(--line);background:radial-gradient(120% 90% at 30% 10%,var(--panel-2),var(--bg));border-radius:14px;aspect-ratio:4/5;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:26px}
-  .portrait::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(198,241,53,.06))}
+  .portrait .photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  .portrait::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(8,9,11,0) 40%,rgba(8,9,11,.85) 100%)}
   .portrait .mono-badge{position:absolute;top:22px;left:22px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:1px;color:var(--txt-3);text-transform:uppercase}
   .portrait .initials{font-size:5rem;font-weight:800;color:rgba(232,236,239,.06);position:absolute;top:38%;left:50%;transform:translate(-50%,-50%)}
   .portrait .pname{position:relative;z-index:2}
@@ -280,6 +281,7 @@
 <section class="block founder" id="founder">
   <div class="wrap">
     <div class="portrait reveal">
+      <img class="photo" src="founder.jpg" alt="Sarvarjon Narimonov" onerror="this.style.display='none'">
       <div class="mono-badge">// david franklin llc</div>
       <div class="initials">SN</div>
       <div class="pname"><strong>Sarvarjon Narimonov</strong><span>Founder &middot; US trucking &amp; logistics expert</span></div>
