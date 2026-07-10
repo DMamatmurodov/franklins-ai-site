@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Franklins AI — AI Driver Recruiting for US Trucking</title>
+<style>
+  :root{
+    --bg:#08090B;--bg-2:#0F1115;--panel:#12151A;--panel-2:#171B21;
+    --line:#23272F;--line-2:#2C323B;
+    --txt:#E8ECEF;--txt-2:#9AA4AF;--txt-3:#6B7580;
+    --lime:#C6F135;--lime-2:#9FD40E;--lime-glow:rgba(198,241,53,.16);
+    --cyan:#37E0C8;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--txt);font-family:"Inter","Helvetica Neue",Arial,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  h1,h2,h3{font-family:"Inter","Helvetica Neue",Arial,sans-serif;letter-spacing:-.02em}
+  .mono{font-family:"IBM Plex Mono","SFMono-Regular",Menlo,monospace}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 28px}
+
+  /* ambient glow */
+  body::before{content:"";position:fixed;top:-30%;left:50%;transform:translateX(-50%);width:900px;height:600px;background:radial-gradient(ellipse at center,var(--lime-glow),transparent 70%);pointer-events:none;z-index:0}
+
+  nav{position:sticky;top:0;z-index:60;background:rgba(8,9,11,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:66px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:700}
+  .brand .dot{width:11px;height:11px;border-radius:2px;background:var(--lime);box-shadow:0 0 12px var(--lime)}
+  .brand span.name{font-size:19px;letter-spacing:-.01em}
+  .brand span.name b{color:var(--lime)}
+  .nav-links{display:flex;gap:26px;align-items:center}
+  .nav-links a{font-size:14px;color:var(--txt-2);transition:color .2s}
+  .nav-links a:hover{color:var(--txt)}
+  .nav-cta{background:var(--lime);color:#0A0A0A;padding:9px 18px;border-radius:6px;font-size:14px;font-weight:700;transition:box-shadow .2s,transform .15s}
+  .nav-cta:hover{box-shadow:0 0 24px var(--lime-glow);transform:translateY(-1px)}
+  .burger{display:none;font-size:24px;background:none;border:none;color:var(--txt);cursor:pointer}
+
+  .hero{position:relative;z-index:1;padding:80px 0 34px}
+  .eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--lime);font-weight:600;margin-bottom:26px;font-family:"IBM Plex Mono",monospace}
+  .eyebrow .live{width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 0 var(--lime-glow);animation:blip 2s infinite}
+  @keyframes blip{0%{box-shadow:0 0 0 0 rgba(198,241,53,.5)}70%{box-shadow:0 0 0 8px rgba(198,241,53,0)}100%{box-shadow:0 0 0 0 rgba(198,241,53,0)}}
+  .hero h1{font-size:clamp(2.4rem,6vw,4.6rem);line-height:1.02;font-weight:800;max-width:16ch;margin-bottom:24px}
+  .hero h1 em{font-style:normal;color:var(--lime)}
+  .hero p.lede{font-size:clamp(1.05rem,2vw,1.28rem);color:var(--txt-2);max-width:54ch;margin-bottom:34px}
+  .hero-actions{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .btn-primary{background:var(--lime);color:#0A0A0A;font-weight:700;font-size:15px;padding:15px 30px;border-radius:8px;transition:box-shadow .2s,transform .15s;display:inline-block}
+  .btn-primary:hover{box-shadow:0 0 30px var(--lime-glow);transform:translateY(-2px)}
+  .btn-ghost{font-weight:600;font-size:15px;padding:15px 24px;border:1px solid var(--line-2);border-radius:8px;color:var(--txt);transition:border-color .2s,color .2s}
+  .btn-ghost:hover{border-color:var(--lime);color:var(--lime)}
+
+  .engine{margin-top:60px;border:1px solid var(--line);background:var(--panel);border-radius:14px;display:grid;grid-template-columns:1.15fr 1fr;overflow:hidden;box-shadow:0 40px 80px -40px rgba(0,0,0,.8)}
+  .engine .left{padding:30px;border-right:1px solid var(--line)}
+  .engine .right{padding:30px;background:linear-gradient(160deg,var(--panel-2),var(--bg-2))}
+  .engine h4{font-size:12px;letter-spacing:1.2px;text-transform:uppercase;color:var(--txt-3);margin-bottom:18px;font-family:"IBM Plex Mono",monospace}
+  .pipe{display:flex;align-items:center;gap:13px;padding:12px 0;border-bottom:1px solid var(--line)}
+  .pipe:last-child{border-bottom:none}
+  .pipe .ic{width:34px;height:34px;border-radius:8px;flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;font-family:"IBM Plex Mono",monospace;background:var(--panel-2);border:1px solid var(--line-2);color:var(--txt-2)}
+  .pipe.active .ic{background:var(--lime);color:#0A0A0A;border-color:var(--lime);box-shadow:0 0 16px var(--lime-glow)}
+  .pipe .t{font-weight:600;font-size:14.5px}
+  .pipe .s{font-size:12.5px;color:var(--txt-3)}
+  .pipe .tag{margin-left:auto;font-size:11px;font-family:"IBM Plex Mono",monospace;padding:3px 9px;border-radius:20px;background:var(--panel-2);color:var(--txt-2);border:1px solid var(--line-2)}
+  .pipe .tag.pass{background:var(--lime-glow);color:var(--lime);border-color:transparent}
+  .right .stat{margin-bottom:22px}
+  .right .stat .num{font-size:2.6rem;line-height:1;font-weight:800}
+  .right .stat .num b{color:var(--lime)}
+  .right .stat .lbl{font-size:13px;color:var(--txt-3);margin-top:6px}
+  .live-tag{font-size:12px;color:var(--txt-3);display:flex;align-items:center;gap:7px;font-family:"IBM Plex Mono",monospace}
+  .live-tag .d{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+
+  .strip{position:relative;z-index:1;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg-2);padding:20px 0}
+  .strip .wrap{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-between;align-items:center}
+  .strip .item{font-size:14px;color:var(--txt-2)}
+  .strip .item b{color:var(--lime);font-family:"IBM Plex Mono",monospace}
+
+  section.block{position:relative;z-index:1;padding:94px 0}
+  .sec-head{max-width:62ch;margin-bottom:50px}
+  .sec-eyebrow{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--lime);font-weight:600;margin-bottom:16px;font-family:"IBM Plex Mono",monospace}
+  .sec-head h2{font-size:clamp(1.9rem,4vw,2.9rem);line-height:1.08;font-weight:800;margin-bottom:16px}
+  .sec-head p{font-size:1.08rem;color:var(--txt-2)}
+
+  .vgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .vcard{padding:30px 28px;border:1px solid var(--line);background:var(--panel);border-radius:12px;transition:border-color .25s,transform .2s}
+  .vcard:hover{border-color:var(--line-2);transform:translateY(-3px)}
+  .vcard .idx{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--lime)}
+  .vcard h3{font-size:1.25rem;margin:14px 0 10px;font-weight:700}
+  .vcard p{color:var(--txt-2);font-size:14.5px}
+
+  .contrib{background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .contrib .wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px;align-items:start}
+  .contrib .lead h2{font-size:clamp(1.9rem,4vw,2.8rem);line-height:1.08;font-weight:800;margin-bottom:18px}
+  .contrib .lead p{color:var(--txt-2);font-size:1.05rem}
+  .clist{list-style:none}
+  .clist li{display:flex;gap:20px;padding:22px 0;border-bottom:1px solid var(--line)}
+  .clist li:last-child{border-bottom:none}
+  .clist .cn{font-family:"IBM Plex Mono",monospace;font-size:14px;color:var(--lime);flex:none;padding-top:3px}
+  .clist h4{font-size:1.18rem;margin-bottom:6px;font-weight:700}
+  .clist p{font-size:14.5px;color:var(--txt-2)}
+
+  .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+  .step{position:relative;padding-top:30px;border-top:2px solid var(--line-2)}
+  .step::after{content:"";position:absolute;top:-2px;left:0;width:40%;height:2px;background:var(--lime)}
+  .step .n{position:absolute;top:-16px;left:0;background:var(--lime);color:#0A0A0A;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:"IBM Plex Mono",monospace;font-weight:700;font-size:13px}
+  .step h4{font-size:1.05rem;margin-bottom:9px;font-weight:700}
+  .step p{font-size:13.5px;color:var(--txt-2)}
+
+  .results{background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .rlabel{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;font-family:"IBM Plex Mono",monospace;color:var(--lime);border:1px solid var(--line-2);padding:5px 14px;border-radius:20px;margin-bottom:34px}
+  .rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .rcard{padding:30px 26px;border:1px solid var(--line);border-radius:12px;background:var(--bg-2)}
+  .rcard .big{font-size:clamp(2.6rem,6vw,3.8rem);line-height:1;font-weight:800;color:var(--lime)}
+  .rcard .cap{font-size:14.5px;color:var(--txt-2);margin-top:10px}
+  .target{margin-top:24px;border:1px solid var(--line-2);border-radius:12px;padding:24px 26px;display:flex;gap:24px;align-items:center;flex-wrap:wrap;background:linear-gradient(120deg,var(--panel-2),transparent)}
+  .target .tnum{font-size:2.6rem;font-weight:800;color:var(--cyan)}
+  .target .tt{font-size:14px;color:var(--txt-2);max-width:54ch}
+  .target .tt b{color:var(--txt)}
+  .rsource{margin-top:28px;font-size:12.5px;color:var(--txt-3)}
+  .rsource a{color:var(--txt-2);border-bottom:1px solid var(--line-2)}
+
+  .founder .wrap{display:grid;grid-template-columns:.85fr 1.15fr;gap:56px;align-items:start}
+  .portrait{border:1px solid var(--line);background:radial-gradient(120% 90% at 30% 10%,var(--panel-2),var(--bg));border-radius:14px;aspect-ratio:4/5;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:26px}
+  .portrait::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(198,241,53,.06))}
+  .portrait .mono-badge{position:absolute;top:22px;left:22px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:1px;color:var(--txt-3);text-transform:uppercase}
+  .portrait .initials{font-size:5rem;font-weight:800;color:rgba(232,236,239,.06);position:absolute;top:38%;left:50%;transform:translate(-50%,-50%)}
+  .portrait .pname{position:relative;z-index:2}
+  .portrait .pname strong{display:block;font-size:1.4rem;font-weight:800}
+  .portrait .pname span{font-size:13px;color:var(--txt-3)}
+  .founder h2{font-size:clamp(1.8rem,3.6vw,2.5rem);line-height:1.1;font-weight:800;margin-bottom:20px}
+  .founder p{color:var(--txt-2);margin-bottom:16px;font-size:1.02rem}
+  .founder .creds{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0}
+  .founder .creds span{font-size:12.5px;background:var(--panel);border:1px solid var(--line-2);padding:6px 12px;border-radius:20px;color:var(--txt-2)}
+  .philo{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:8px}
+  .philo div{border-left:2px solid var(--lime);padding-left:16px}
+  .philo b{font-size:1.05rem;display:block;margin-bottom:4px;font-weight:700}
+  .philo p{font-size:13.5px;margin:0}
+
+  .cta{background:var(--bg-2);border-top:1px solid var(--line)}
+  form{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:640px}
+  form .full{grid-column:1/-1}
+  label{display:block;font-size:12px;letter-spacing:.5px;text-transform:uppercase;color:var(--txt-3);margin-bottom:7px;font-family:"IBM Plex Mono",monospace}
+  input,select,textarea{width:100%;background:var(--panel);border:1px solid var(--line-2);color:var(--txt);padding:13px 14px;border-radius:8px;font-size:15px;font-family:inherit}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--lime)}
+  form button{grid-column:1/-1;background:var(--lime);color:#0A0A0A;border:none;padding:15px;font-size:15px;font-weight:700;border-radius:8px;cursor:pointer;transition:box-shadow .2s}
+  form button:hover{box-shadow:0 0 30px var(--lime-glow)}
+  .note{grid-column:1/-1;font-size:12.5px;color:var(--txt-3)}
+
+  footer{background:var(--bg);border-top:1px solid var(--line);color:var(--txt-3);padding:40px 0;font-size:14px;position:relative;z-index:1}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px;align-items:center}
+  footer .brand span.name{color:var(--txt)}
+
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+  @media(max-width:900px){
+    .nav-links{display:none}.burger{display:block}
+    .engine{grid-template-columns:1fr}.engine .left{border-right:none;border-bottom:1px solid var(--line)}
+    .vgrid{grid-template-columns:1fr}.flow{grid-template-columns:1fr 1fr}
+    .contrib .wrap{grid-template-columns:1fr;gap:34px}
+    .rgrid{grid-template-columns:1fr}
+    .founder .wrap{grid-template-columns:1fr;gap:32px}.philo{grid-template-columns:1fr}
+    form{grid-template-columns:1fr}
+  }
+  @media(max-width:520px){.flow{grid-template-columns:1fr}.strip .wrap{gap:14px}}
+  @media(prefers-reduced-motion:reduce){.reveal{transition:none;opacity:1;transform:none}.eyebrow .live,.live-tag .d{animation:none}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap nav-in">
+    <a href="#top" class="brand"><span class="dot"></span><span class="name">Franklins<b>.AI</b></span></a>
+    <div class="nav-links">
+      <a href="#what">Platform</a>
+      <a href="#contribution">Contribution</a>
+      <a href="#how">Methodology</a>
+      <a href="#results">Results</a>
+      <a href="#founder">Founder</a>
+      <a href="#contact" class="nav-cta">Book a pilot</a>
+    </div>
+    <button class="burger" aria-label="menu">&#9776;</button>
+  </div>
+</nav>
+<header class="hero" id="top">
+  <div class="wrap">
+    <span class="eyebrow"><span class="live"></span>AI driver recruiting &middot; US trucking</span>
+    <h1>The AI recruiter that fills <em>trucks with the right drivers</em> &mdash; from first call to signed contract.</h1>
+    <p class="lede">Franklins AI runs the entire driver funnel: it screens applications, interviews and qualifies leads around the clock, and predicts who will actually stay &mdash; delivering carriers a shortlist of vetted, road-ready drivers instead of a stack of resumes.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">Book a free pilot</a>
+      <a href="#how" class="btn-ghost">See the methodology</a>
+    </div>
+    <div class="engine reveal">
+      <div class="left">
+        <h4>// the driver funnel — automated end to end</h4>
+        <div class="pipe"><div class="ic">01</div><div><div class="t">Application screened</div><div class="s">NLP reads CDL class, ELD &amp; route history</div></div><div class="tag">2.1s</div></div>
+        <div class="pipe active"><div class="ic">02</div><div><div class="t">AI interview &amp; lead qualification</div><div class="s">24/7 — availability, endorsements, pay range</div></div><div class="tag">live</div></div>
+        <div class="pipe"><div class="ic">03</div><div><div class="t">Retention scored</div><div class="s">Predictive model flags likely-to-stay</div></div><div class="tag">0.88</div></div>
+        <div class="pipe"><div class="ic">04</div><div><div class="t">Passed to recruiter</div><div class="s">One report: CDL, MVR, carrier history, FMCSA</div></div><div class="tag pass">ready</div></div>
+      </div>
+      <div class="right">
+        <h4>// what the recruiter sees</h4>
+        <div class="stat"><div class="num"><b>50%</b> less</div><div class="lbl">time spent screening candidates</div></div>
+        <div class="stat"><div class="num"><b>1</b> report</div><div class="lbl">vetted, retention-scored, road-ready drivers</div></div>
+        <div class="live-tag"><span class="d"></span>pipeline running against live applications</div>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="strip">
+  <div class="wrap">
+    <div class="item">Driver turnover at large carriers runs <b>~90%/yr</b></div>
+    <div class="item">Recruiters chase <b>unqualified leads</b> for most of the day</div>
+    <div class="item">Every empty seat is <b>lost revenue</b> per mile</div>
+  </div>
+</div>
+<section class="block" id="what">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-eyebrow">// the platform</div>
+      <h2>Four AI systems, one recruiting pipeline built for trucking.</h2>
+      <p>Generic hiring tools don't understand a driver. Franklins AI is built around what actually matters in trucking &mdash; endorsements, equipment, routes, compliance, and whether a driver will still be there in six months.</p>
+    </div>
+    <div class="vgrid">
+      <div class="vcard reveal"><div class="idx">01 — Screening</div><h3>NLP resume screening</h3><p>Reads each application the way a veteran recruiter would &mdash; CDL class, ELD experience, endorsements, route and equipment history &mdash; and filters for real fit, not keywords.</p></div>
+      <div class="vcard reveal"><div class="idx">02 — Interviews</div><h3>24/7 AI interviews &amp; qualification</h3><p>An AI recruiter engages every applicant instantly, at any hour, asks the right questions, confirms availability and requirements, and passes only genuinely ready candidates to a human.</p></div>
+      <div class="vcard reveal"><div class="idx">03 — Retention</div><h3>Predictive retention analytics</h3><p>Scores each candidate on likelihood to stay, so carriers hire for retention &mdash; attacking the turnover that quietly drains fleet profitability.</p></div>
+      <div class="vcard reveal"><div class="idx">04 — One report</div><h3>Unified vetting report + ATS</h3><p>CDL, MVR, carrier history and FMCSA compliance in one clear report, delivered straight into the carrier's existing ATS &mdash; no rip-and-replace.</p></div>
+    </div>
+  </div>
+</section>
+<section class="block contrib" id="contribution">
+  <div class="wrap">
+    <div class="lead reveal">
+      <div class="sec-eyebrow">// the contribution</div>
+      <h2>What this system changes for US trucking.</h2>
+      <p>Franklins AI was built to move the numbers that decide whether a carrier's recruiting works &mdash; and to bring a level of automation the sector hasn't had.</p>
+    </div>
+    <ul class="clist reveal">
+      <li><div class="cn">01</div><div><h4>Faster, sharper matches for drivers</h4><p>Drivers are surfaced for the carriers and routes they genuinely fit, and reach a real decision faster instead of waiting in a queue.</p></div></li>
+      <li><div class="cn">02</div><div><h4>The right candidates, without the time drain</h4><p>Carriers identify qualified, road-ready drivers in a fraction of the time &mdash; recruiters interview instead of sifting.</p></div></li>
+      <li><div class="cn">03</div><div><h4>Automation that removes human error</h4><p>Screening, interviewing and scoring run on consistent criteria every time, cutting the oversights and bias that come with high volume.</p></div></li>
+      <li><div class="cn">04</div><div><h4>A new standard for the industry</h4><p>An end-to-end AI recruiting workflow purpose-built for trucking &mdash; advancing how US carriers hire, not adapting a generic job board.</p></div></li>
+    </ul>
+  </div>
+</section>
+<section class="block" id="how">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-eyebrow">// the methodology</div>
+      <h2>A five-step rollout, not a plug-in you hope works.</h2>
+      <p>AI recruiting only pays off when it's built into how a carrier actually operates. Franklins AI follows a structured method &mdash; measured against KPIs at every step.</p>
+    </div>
+    <div class="flow">
+      <div class="step reveal"><div class="n">1</div><h4>Audit</h4><p>Map the current recruiting workflow and find where drivers and hours leak out.</p></div>
+      <div class="step reveal"><div class="n">2</div><h4>Set KPIs</h4><p>Define measurable targets &mdash; time-to-hire, cost-per-hire, retention.</p></div>
+      <div class="step reveal"><div class="n">3</div><h4>Integrate</h4><p>Deploy the AI stack into the existing ATS and carrier tools &mdash; no rip-and-replace.</p></div>
+      <div class="step reveal"><div class="n">4</div><h4>Pilot</h4><p>Run a controlled 3&ndash;6 month pilot on live driver hiring.</p></div>
+      <div class="step reveal"><div class="n">5</div><h4>Measure &amp; train</h4><p>Prove the numbers, retrain the model, and upskill the HR team.</p></div>
+    </div>
+  </div>
+</section>
+<section class="block results" id="results">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-eyebrow">// the impact</div>
+      <h2>Measured on a real carrier partnership.</h2>
+      <p>Deployed with a trucking partner, the approach moved the three numbers that decide whether a recruiting operation works.</p>
+    </div>
+    <div class="reveal"><span class="rlabel"><span class="live" style="width:7px;height:7px;border-radius:50%;background:var(--lime);display:inline-block"></span> case result — carrier partnership</span></div>
+    <div class="rgrid reveal">
+      <div class="rcard"><div class="big">+30%</div><div class="cap">increase in qualified driver applications</div></div>
+      <div class="rcard"><div class="big">&minus;50%</div><div class="cap">reduction in candidate screening time</div></div>
+      <div class="rcard"><div class="big">&minus;20%</div><div class="cap">drop in annual driver turnover</div></div>
+    </div>
+    <div class="target reveal">
+      <div class="tnum">30&ndash;40%</div>
+      <div class="tt"><b>Target uplift.</b> Building on a prior engagement that lifted a carrier's growth by roughly 15%, Franklins AI is engineered to push that impact to 30&ndash;40% through full end-to-end automation.</div>
+    </div>
+    <p class="rsource reveal">Case figures from a documented carrier engagement, as reported in <a href="https://uznews.uz/uz/news/111032" target="_blank" rel="noopener">industry press coverage</a> of the founder's work. Target uplift is a projected goal, not a realized result.</p>
+  </div>
+</section>
+<section class="block founder" id="founder">
+  <div class="wrap">
+    <div class="portrait reveal">
+      <div class="mono-badge">// david franklin llc</div>
+      <div class="initials">SN</div>
+      <div class="pname"><strong>Sarvarjon Narimonov</strong><span>Founder &middot; US trucking &amp; logistics expert</span></div>
+    </div>
+    <div class="reveal">
+      <div class="sec-eyebrow">// the founder</div>
+      <h2>Built by an operator who knows trucking from the inside.</h2>
+      <p>Sarvarjon Narimonov is a US trucking-industry and international logistics expert who has played a critical role in the growth and driver-recruiting operations of American carriers &mdash; contributing to the scaling of more than a dozen transportation companies. Franklins AI grew directly out of that operational experience.</p>
+      <p>An entrepreneur since the age of 12 in Tashkent and a graduate of La Trobe University, he approaches recruiting as a data problem: measure everything, own the outcome, and let the numbers &mdash; not habit &mdash; decide.</p>
+      <div class="creds">
+        <span>US trucking industry expert</span>
+        <span>International logistics</span>
+        <span>Scaled 15+ carriers</span>
+        <span>La Trobe University</span>
+        <span>David Franklin LLC</span>
+      </div>
+      <div class="philo">
+        <div><b>Radical Responsibility</b><p>Own the result end to end &mdash; no diffusing accountability across the funnel.</p></div>
+        <div><b>Data-Driven Management</b><p>Decisions follow measured KPIs, not intuition or industry habit.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="block cta" id="contact">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-eyebrow">// get started</div>
+      <h2>Book a free, no-obligation pilot.</h2>
+      <p>Tell us about your driver hiring. We'll show you where the pipeline is leaking and run the AI funnel against your real candidate pipeline.</p>
+    </div>
+    <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" class="reveal">
+      <div><label for="name">Name</label><input id="name" name="name" required></div>
+      <div><label for="company">Carrier / company</label><input id="company" name="company"></div>
+      <div><label for="email">Work email</label><input id="email" type="email" name="email" required></div>
+      <div><label for="fleet">Fleet size</label>
+        <select id="fleet" name="fleet"><option>1&ndash;25 trucks</option><option>26&ndash;100 trucks</option><option>101&ndash;500 trucks</option><option>500+ trucks</option></select>
+      </div>
+      <div class="full"><label for="msg">Biggest driver-hiring challenge?</label><textarea id="msg" name="message" rows="3" placeholder="e.g. too many unqualified leads, high 90-day turnover, slow screening"></textarea></div>
+      <button type="submit">Book a pilot</button>
+      <div class="note">Replace YOUR_FORM_ID in the form action with your Formspree endpoint to receive submissions by email.</div>
+    </form>
+  </div>
+</section>
+<footer>
+  <div class="wrap">
+    <a href="#top" class="brand"><span class="dot"></span><span class="name">Franklins<b>.AI</b></span></a>
+    <div>AI driver recruiting &middot; a David Franklin LLC venture</div>
+    <div>&copy; 2026 Franklins AI. All rights reserved.</div>
+  </div>
+</footer>
+<script>
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  document.querySelector('.burger').addEventListener('click',()=>{
+    const n=document.querySelector('.nav-links');
+    n.style.display=n.style.display==='flex'?'none':'flex';
+    n.style.position='absolute';n.style.top='66px';n.style.right='28px';
+    n.style.flexDirection='column';n.style.background='var(--panel)';
+    n.style.padding='18px 22px';n.style.border='1px solid var(--line)';n.style.borderRadius='10px';
+  });
+</script>
+</body>
+</html>
